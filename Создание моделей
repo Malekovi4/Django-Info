@@ -1,0 +1,34 @@
+Философия
+
+Модель — это единственный окончательный источник информации о ваших данных. Он содержит основные поля и поведение данных, которые вы храните. Django следует [принципу DRY](https://docs.djangoproject.com/en/4.2/misc/design-philosophies/#dry) . Цель состоит в том, чтобы определить вашу модель данных в одном месте и автоматически извлекать из нее данные.
+
+Это включает в себя миграции — в отличие, например, от Ruby On Rails, миграции полностью берутся из вашего файла моделей и, по сути, представляют собой историю, которую Django может прокручивать, чтобы обновить схему вашей базы данных, чтобы она соответствовала вашим текущим моделям.
+
+
+
+rom django.db import models
+
+class Question(models.Model):
+    question_text  (Имя бд) = models.CharField (Прикольный тип данных) (max_length=200)
+    pub_date (Имя бд) = models.DateTimeField (Прикольный тип данных) ("date published")
+
+class Choice(models.Model):
+    question (Имя бд) = models.ForeignKey (Прикольный тип данных) Question, on_delete=models.CASCADE)
+    choice_text (Имя бд) = models.CharField (Прикольный тип данных )(max_length=200)
+    votes  (Имя бд) = models.IntegerField (Прикольный тип данных) (default=0)
+
+Некоторые [`Field`](https://docs.djangoproject.com/en/4.2/ref/models/fields/#django.db.models.Field "django.db.models.Field")классы имеют обязательные аргументы. [`CharField`](https://docs.djangoproject.com/en/4.2/ref/models/fields/#django.db.models.CharField "django.db.models.CharField"), например, требует, чтобы вы дали ему расширение [`max_length`](https://docs.djangoproject.com/en/4.2/ref/models/fields/#django.db.models.CharField.max_length "django.db.models.CharField.max_length"). Это используется не только в схеме базы данных, но и при проверке, как мы скоро увидим.
+
+A [`Field`](https://docs.djangoproject.com/en/4.2/ref/models/fields/#django.db.models.Field "django.db.models.Field")также может иметь различные необязательные аргументы; в этом случае мы установили значение [`default`](https://docs.djangoproject.com/en/4.2/ref/models/fields/#django.db.models.Field.default "django.db.models.Field.default")равным `votes`0.
+
+Наконец, обратите внимание, что связь определяется с помощью [`ForeignKey`](https://docs.djangoproject.com/en/4.2/ref/models/fields/#django.db.models.ForeignKey "django.db.models.ForeignKey"). Это говорит Django, что каждый из них `Choice`связан с одним файлом `Question`. Django поддерживает все распространенные отношения базы данных: многие-к-одному, многие-ко-многим и один-к-одному.
+
+
+--> py manage.py makemigrations polls
+
+- Обновляет инфу по моделям, а чтобы добавить модель в базу данных как я понял, надо в mysite/settings.py, наебашить вот такое:
+
+INSTALLED_APPS = [
+    "polls.apps.PollsConfig",
+    ]
+
