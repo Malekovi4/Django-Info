@@ -1,0 +1,25 @@
+Вход в виртуальную среду:
+
+--> tutorial-env\Scripts\activate.bat
+
+
+Создание приложения:
+
+--> py manage.py startapp polls
+
+- Нужно делать в папке с manage.py
+
+--> $ python manage.py runserver
+
+- Запуск сервера
+
+Однако некоторые из этих приложений используют как минимум одну таблицу базы данных, поэтому нам необходимо создать таблицы в базе данных, прежде чем мы сможем их использовать. Для этого выполните следующую команду:
+
+
+--> py manage.py migrate
+
+
+
+Для минималистов
+
+Как мы уже говорили выше, приложения по умолчанию включены для общего случая, но не всем они нужны. Если вам не нужны некоторые или все из них, не стесняйтесь закомментировать или удалить соответствующие строки [`INSTALLED_APPS`](https://docs.djangoproject.com/en/4.2/ref/settings/#std-setting-INSTALLED_APPS)перед запуском [`migrate`](https://docs.djangoproject.com/en/4.2/ref/django-admin/#django-admin-migrate). Команда [`migrate`](https://docs.djangoproject.com/en/4.2/ref/django-admin/#django-admin-migrate)будет запускать миграцию только для приложений в формате [`INSTALLED_APPS`](https://docs.djangoproject.com/en/4.2/ref/settings/#std-setting-INSTALLED_APPS).
