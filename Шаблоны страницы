@@ -1,0 +1,46 @@
+Сначала создайте каталог с именем `templates`в вашем `polls`каталоге. Django будет искать там шаблоны.
+
+Настройка вашего проекта [`TEMPLATES`](https://docs.djangoproject.com/en/4.2/ref/settings/#std-setting-TEMPLATES)описывает, как Django будет загружать и отображать шаблоны. Файл настроек по умолчанию настраивает `DjangoTemplates` серверную часть, для которой [`APP_DIRS`](https://docs.djangoproject.com/en/4.2/ref/settings/#std-setting-TEMPLATES-APP_DIRS)установлено значение `True`. По соглашению `DjangoTemplates`ищет подкаталог «templates» в каждом из файлов [`INSTALLED_APPS`](https://docs.djangoproject.com/en/4.2/ref/settings/#std-setting-INSTALLED_APPS).
+
+В `templates`только что созданном каталоге создайте другой каталог с именем `polls`, а в нем создайте файл с именем `index.html`. Другими словами, ваш шаблон должен быть в `polls/templates/polls/index.html`. Из-за того, как `app_directories` работает загрузчик шаблонов, как описано выше, вы можете обращаться к этому шаблону в Django как `polls/index.html`.
+
+
+Теперь давайте обновим наше `index`представление, `polls/views.py`чтобы использовать шаблон:
+
+`polls/views.py`[¶](https://docs.djangoproject.com/en/4.2/intro/tutorial03/#id6 "Постоянная ссылка на этот код")
+
+from django.http import HttpResponse
+from django.template import loader
+
+from .models import Question
+
+def index(request):
+    latest_question_list = Question.objects.order_by("-pub_date")[:5]
+    template = loader.get_template("polls/index.html")
+    context = {
+        "latest_question_list": latest_question_list,
+    }
+    return HttpResponse(template.render(context, request))
+
+Этот код загружает вызываемый шаблон `polls/index.html`и передает ему контекст. Контекст — это словарь, сопоставляющий имена переменных шаблона с объектами Python.
+
+Загрузите страницу, указав в браузере «/polls/», и вы должны увидеть маркированный список, содержащий вопрос «Что нового» из [Учебника 2](https://docs.djangoproject.com/en/4.2/intro/tutorial02/) . Ссылка ведет на страницу сведений о вопросе.
+
+### Ярлык: [¶](https://docs.djangoproject.com/en/4.2/intro/tutorial03/#a-shortcut-render "Постоянная ссылка на этот заголовок")[`render()`](https://docs.djangoproject.com/en/4.2/topics/http/shortcuts/#django.shortcuts.render "django.shortcuts.render")[](https://docs.djangoproject.com/en/4.2/intro/tutorial03/#a-shortcut-render "Постоянная ссылка на этот заголовок")
+
+Очень распространена идиома: загрузить шаблон, заполнить контекст и вернуть объект [`HttpResponse`](https://docs.djangoproject.com/en/4.2/ref/request-response/#django.http.HttpResponse "django.http.HttpResponse")с результатом отрендеренного шаблона. Django предоставляет ярлык. Вот полный `index()`вид, переписанный:
+
+`polls/views.py`[¶](https://docs.djangoproject.com/en/4.2/intro/tutorial03/#id7 "Постоянная ссылка на этот код")
+
+from django.shortcuts import render
+
+from .models import Question
+
+def index(request):
+    latest_question_list = Question.objects.order_by("-pub_date")[:5]
+    context = {"latest_question_list": latest_question_list}
+    return render(request, "polls/index.html", context)
+
+Обратите внимание, что после того, как мы сделали это во всех этих представлениях, нам больше не нужно импортировать [`loader`](https://docs.djangoproject.com/en/4.2/topics/templates/#module-django.template.loader "django.template.loader")и [`HttpResponse`](https://docs.djangoproject.com/en/4.2/ref/request-response/#django.http.HttpResponse "django.http.HttpResponse")(вы захотите сохранить, `HttpResponse`если у вас все еще есть методы-заглушки для `detail`, `results`и `vote`).
+
+Функция [`render()`](https://docs.djangoproject.com/en/4.2/topics/http/shortcuts/#django.shortcuts.render "django.shortcuts.render")принимает объект запроса в качестве первого аргумента, имя шаблона в качестве второго аргумента и словарь в качестве необязательного третьего аргумента. Он возвращает [`HttpResponse`](https://docs.djangoproject.com/en/4.2/ref/request-response/#django.http.HttpResponse "django.http.HttpResponse") объект данного шаблона, отображаемый с заданным контекстом.
